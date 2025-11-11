@@ -1,0 +1,6 @@
+<clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="input.xsd">
+    <cliente><codigo>123</codigo></cliente>
+    <cliente><codigo>456</codigo></cliente>
+    <cliente><codigo>789</codigo></cliente>
+</clientes>
