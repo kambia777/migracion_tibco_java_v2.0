@@ -14,9 +14,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.example.demo.Repository.ClienteRepository;
+import com.example.demo.entity.Cliente;
+
 @Component
 public class FileMessageListener {
+	private final ClienteRepository clienteRepository;
 
+	public FileMessageListener(ClienteRepository clienteRepository) {
+	    this.clienteRepository = clienteRepository;
+	}
 	@RabbitListener(queues = "cola.ficheros")
 	public void receiveMessage(String filePath) throws SAXException, IOException, ParserConfigurationException {
 		System.out.println("📥 Ruta recibida: " + filePath);
@@ -64,8 +71,10 @@ public class FileMessageListener {
 					Element elemento = (Element) nodo;
 
 					String nombre = elemento.getElementsByTagName("codigo").item(0).getTextContent();
-
-
+					Cliente cliente = new Cliente();
+                    cliente.setCodigo(nombre);
+                    clienteRepository.save(cliente);
+					
 					System.out.println("codigo: " + nombre );
 				}
 
