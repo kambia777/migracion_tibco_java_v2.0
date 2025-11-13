@@ -16,6 +16,7 @@ import org.xml.sax.SAXException;
 
 import com.example.demo.Repository.ClienteRepository;
 import com.example.demo.entity.Cliente;
+import com.example.demo.service.ClienteServiceApi;
 
 @Component
 public class FileMessageListener {
@@ -28,6 +29,8 @@ public class FileMessageListener {
 	public void receiveMessage(String filePath) throws SAXException, IOException, ParserConfigurationException {
 		System.out.println("📥 Ruta recibida: " + filePath);
 		processFile(filePath);
+		ClienteServiceApi servicio = new ClienteServiceApi();
+        Cliente[] clientes = servicio.obtenerTodosClientes("admin", "1234");
 	}
 
 	private void processFile(String filePath) throws SAXException, IOException, ParserConfigurationException {
