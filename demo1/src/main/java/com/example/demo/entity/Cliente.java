@@ -11,8 +11,10 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String codigo;
+    
 
-    // Getters y Setters
+
+	// Getters y Setters
     public Long getId() {
         return id;
     }

@@ -18,9 +18,9 @@ public class FileController {
     }
 
     @PostMapping("/send")
-    public String sendFile(@RequestParam String path) {
-        fileMessageProducer.sendFilePath(path);
-        return "Ruta enviada a la cola: " + path;
+    public String sendFile(@RequestParam String filePath) {
+        fileMessageProducer.sendFilePath(filePath);
+        return "Ruta enviada a la cola: " + filePath;
     }
 
 }

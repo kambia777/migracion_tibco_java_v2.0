@@ -17,72 +17,21 @@ import org.xml.sax.SAXException;
 import com.example.demo.Repository.ClienteRepository;
 import com.example.demo.entity.Cliente;
 import com.example.demo.service.ClienteServiceApi;
+import com.example.demo.service.XmlFileProcessor;
 
 @Component
 public class FileMessageListener {
-	private final ClienteRepository clienteRepository;
+    private final XmlFileProcessor xmlFileProcessor;
 
-	public FileMessageListener(ClienteRepository clienteRepository) {
-	    this.clienteRepository = clienteRepository;
-	}
+    public FileMessageListener(XmlFileProcessor xmlFileProcessor) {
+        this.xmlFileProcessor = xmlFileProcessor;
+    }
 	@RabbitListener(queues = "cola.ficheros")
 	public void receiveMessage(String filePath) throws SAXException, IOException, ParserConfigurationException {
 		System.out.println("📥 Ruta recibida: " + filePath);
-		processFile(filePath);
+		xmlFileProcessor.processFile(filePath);
 		ClienteServiceApi servicio = new ClienteServiceApi();
         Cliente[] clientes = servicio.obtenerTodosClientes("admin", "1234");
 	}
-
-	private void processFile(String filePath) throws SAXException, IOException, ParserConfigurationException {
-		File file = new File(filePath);
-		if (file.exists()) {
-			System.out.println("✅ Procesando archivo: " + file.getName());
-			Document doc = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder()
-					.parse(file);
-			processXmlNodes(doc, "cliente");
-			/*NodeList clientes = doc.getElementsByTagName("cliente");
-			for (int i = 0; i < clientes.getLength(); i++) {
-				//System.out.println(clientes.getLength());
-				Node nodo = clientes.item(i); 	
-				if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-					Element elemento = (Element) nodo;
-
-					String nombre = elemento.getElementsByTagName("codigo").item(0).getTextContent();
-
-
-					System.out.println("codigo: " + nombre );
-				}
-
-			}*/
-
-
-
-			// Aquí puedes añadir tu lógica de procesamiento
-		} else {
-			System.out.println("⚠️ Archivo no encontrado: " + filePath);
-		}
-	}
-		
-		public void processXmlNodes(Document doc, String nodoName) {
-			
-			NodeList clientes = doc.getElementsByTagName(nodoName);
-			for (int i = 0; i < clientes.getLength(); i++) {
-				//System.out.println(clientes.getLength());
-				Node nodo = clientes.item(i); 	
-				if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-					Element elemento = (Element) nodo;
-
-					String nombre = elemento.getElementsByTagName("codigo").item(0).getTextContent();
-					Cliente cliente = new Cliente();
-                    cliente.setCodigo(nombre);
-                    clienteRepository.save(cliente);
-					
-					System.out.println("codigo: " + nombre );
-				}
-
-			}
-		}
-	
 
 }
