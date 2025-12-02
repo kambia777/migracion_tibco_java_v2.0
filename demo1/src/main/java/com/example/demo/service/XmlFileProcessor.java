@@ -54,9 +54,10 @@ public class XmlFileProcessor {
                 Element elemento = (Element) nodo;
 
                 String codigo = elemento.getElementsByTagName("codigo").item(0).getTextContent();
-
+                String nombre = elemento.getElementsByTagName("nombre").item(0).getTextContent();
                 Cliente cliente = new Cliente();
                 cliente.setCodigo(codigo);
+                cliente.setNombre(nombre);
 
                 clienteRepository.save(cliente);
 

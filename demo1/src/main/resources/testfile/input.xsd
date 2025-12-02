@@ -8,6 +8,7 @@
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="codigo" type="xs:string"/>
+                            <xs:element name="nombre" type="xs:string"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

@@ -1,6 +1,15 @@
 <clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="input.xsd">
-    <cliente><codigo>124</codigo></cliente>
-    <cliente><codigo>457</codigo></cliente>
-    <cliente><codigo>790</codigo></cliente>
+    <cliente>
+    	<codigo>701</codigo>
+    	<nombre>Katherin</nombre>
+    </cliente>
+    <cliente>
+    	<codigo>702</codigo>
+    	<nombre>Margarita</nombre>
+    </cliente>
+    <cliente>
+    	<codigo>703</codigo>
+    	<nombre>Luis</nombre>
+    </cliente>
 </clientes>
