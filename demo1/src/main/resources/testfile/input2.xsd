@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="clientes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="cliente">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="id" type="xs:string" />
+							<xs:element name="codigo" type="xs:string" />
+							<xs:element name="pedido">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="fecha" type="xs:string" />
+										<xs:element name="estado" type="xs:string" />
+										<xs:element name="total" type="xs:string" />
+										<xs:element name="detalle_pedido" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="producto">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="id_producto" type="xs:string" />
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="cantidad" type="xs:string" />
+													<xs:element name="precio_unitario" type="xs:string" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

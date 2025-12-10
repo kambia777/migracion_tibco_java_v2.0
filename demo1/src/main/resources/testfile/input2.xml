@@ -1,0 +1,19 @@
+<clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="input2.xsd">
+<cliente>
+	<id>23</id>
+	<codigo>705</codigo>
+	<pedido>
+		<fecha>2024-12-01</fecha>
+		<estado>confirmado</estado>
+		<total>1.00</total>
+		<detalle_pedido>
+			<producto>
+				<id_producto>5</id_producto>
+			</producto>
+			<cantidad>2</cantidad>
+			<precio_unitario>1.00</precio_unitario>
+		</detalle_pedido>
+	</pedido>
+</cliente>
+</clientes>

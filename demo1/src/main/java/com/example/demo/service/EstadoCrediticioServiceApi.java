@@ -1,0 +1,58 @@
+package com.example.demo.service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+
+import com.example.demo.dto.EstadoCrediticioDTO;
+
+
+public class EstadoCrediticioServiceApi {
+
+	private final RestTemplate restTemplate;
+
+    public EstadoCrediticioServiceApi() {
+        this.restTemplate = new RestTemplate();
+    }
+
+    public EstadoCrediticioDTO esDeudor(String usuario, String password, Long codigoCliente) {
+        // Preparar cabeceras
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Crear Basic Auth
+        String auth = usuario + ":" + password;
+        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+        String authHeader = "Basic " + new String(encodedAuth);
+        headers.set("Authorization", authHeader);
+
+        // Crear entidad con headers
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        
+        //
+        String url = "http://localhost:9090/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
+        System.out.println("url: " + url);
+        // Hacer la petición GET
+        ResponseEntity<EstadoCrediticioDTO> response = restTemplate.exchange(
+        		url,
+                org.springframework.http.HttpMethod.GET,
+                request,
+                EstadoCrediticioDTO.class
+        );
+
+        // Imprimir los clientes
+        //for (EstadoCrediticioDTO c : response.getBody()) {
+        //    System.out.println("ID: " + c.getId() + ", Código: " + c.getCodigo());
+        //}
+
+        return response.getBody();
+    }
+
+	
+}

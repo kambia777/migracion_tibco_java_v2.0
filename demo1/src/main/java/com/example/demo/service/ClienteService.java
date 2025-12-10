@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Repository.ClienteRepository;
 import com.example.demo.entity.Cliente;
+import com.example.demo.repository.ClienteRepository;
 @Service
 public class ClienteService {
 	private final ClienteRepository clienteRepository;

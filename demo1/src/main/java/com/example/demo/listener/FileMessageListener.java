@@ -14,8 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.example.demo.Repository.ClienteRepository;
 import com.example.demo.entity.Cliente;
+import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.ClienteServiceApi;
 import com.example.demo.service.XmlFileProcessor;
 
@@ -30,8 +30,8 @@ public class FileMessageListener {
 	public void receiveMessage(String filePath) throws SAXException, IOException, ParserConfigurationException {
 		System.out.println("📥 Ruta recibida: " + filePath);
 		xmlFileProcessor.processFile(filePath);
-		ClienteServiceApi servicio = new ClienteServiceApi();
-        Cliente[] clientes = servicio.obtenerTodosClientes("admin", "1234");
+		//ClienteServiceApi servicio = new ClienteServiceApi();
+        //Cliente[] clientes = servicio.obtenerTodosClientes("admin", "1234");
 	}
 
 }
