@@ -1,10 +1,10 @@
 <clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="input2.xsd">
 <cliente>
-	<id>23</id>
-	<codigo>705</codigo>
+	<id>22</id>
+	<codigo>704</codigo>
 	<pedido>
-		<fecha>2024-12-01</fecha>
+		<fecha>2024-12-12</fecha>
 		<estado>confirmado</estado>
 		<total>1.00</total>
 		<detalle_pedido>
