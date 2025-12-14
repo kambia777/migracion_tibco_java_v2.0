@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,42 +18,51 @@ public class EstadoCrediticioServiceApi {
 
 	private final RestTemplate restTemplate;
 
-    public EstadoCrediticioServiceApi() {
-        this.restTemplate = new RestTemplate();
-    }
+	// URL de la API externa configurable (Docker-friendly)
+	@Value("${api.terceros.url}")
+	private String apiBaseUrl;
 
-    public EstadoCrediticioDTO esDeudor(String usuario, String password, Long codigoCliente) {
-        // Preparar cabeceras
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+	public EstadoCrediticioServiceApi() {
+		this.restTemplate = new RestTemplate();
+	}
 
-        // Crear Basic Auth
-        String auth = usuario + ":" + password;
-        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
-        String authHeader = "Basic " + new String(encodedAuth);
-        headers.set("Authorization", authHeader);
+	public EstadoCrediticioDTO esDeudor(String usuario, String password, Long codigoCliente) {
+		try {
+			// Preparar cabeceras
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Crear entidad con headers
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        
-        //
-        String url = "http://localhost:9090/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
-        System.out.println("url: " + url);
-        // Hacer la petición GET
-        ResponseEntity<EstadoCrediticioDTO> response = restTemplate.exchange(
-        		url,
-                org.springframework.http.HttpMethod.GET,
-                request,
-                EstadoCrediticioDTO.class
-        );
+			// Crear Basic Auth
+			String auth = usuario + ":" + password;
+			byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+			String authHeader = "Basic " + new String(encodedAuth);
+			headers.set("Authorization", authHeader);
 
-        // Imprimir los clientes
-        //for (EstadoCrediticioDTO c : response.getBody()) {
-        //    System.out.println("ID: " + c.getId() + ", Código: " + c.getCodigo());
-        //}
+			// Crear entidad con headers
+			HttpEntity<String> request = new HttpEntity<>(headers);
 
-        return response.getBody();
-    }
+			// --- Construcción de URL ---
+			String url = "http://host.docker.internal:9090" + "/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
+			System.out.println("🔗 Consumiento API externa: " + url);
+			// Hacer la petición GET
+			ResponseEntity<EstadoCrediticioDTO> response = restTemplate.exchange(
+					url,
+					org.springframework.http.HttpMethod.GET,
+					request,
+					EstadoCrediticioDTO.class
+					);
 
-	
+			// Imprimir los clientes
+			//for (EstadoCrediticioDTO c : response.getBody()) {
+			//    System.out.println("ID: " + c.getId() + ", Código: " + c.getCodigo());
+			//}
+
+			return response.getBody();
+		} catch (Exception ex) {
+			System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
+			return null; // O lanzar excepción personalizada
+		}
+	}
+
+
 }

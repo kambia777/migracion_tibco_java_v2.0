@@ -1,8 +1,8 @@
 <clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="input2.xsd">
 <cliente>
-	<id>22</id>
-	<codigo>704</codigo>
+	<id>23</id>
+	<codigo>705</codigo>
 	<pedido>
 		<fecha>2024-12-12</fecha>
 		<estado>confirmado</estado>
