@@ -42,7 +42,7 @@ public class EstadoCrediticioServiceApi {
 			HttpEntity<String> request = new HttpEntity<>(headers);
 
 			// --- Construcción de URL ---
-			String url = "http://host.docker.internal:9090" + "/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
+			String url = "http://localhost:9090" + "/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
 			System.out.println("🔗 Consumiento API externa: " + url);
 			// Hacer la petición GET
 			ResponseEntity<EstadoCrediticioDTO> response = restTemplate.exchange(

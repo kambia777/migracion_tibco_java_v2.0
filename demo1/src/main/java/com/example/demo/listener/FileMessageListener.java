@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.service.XmlFileProcessor;
 
-@Component
+//@Component
 public class FileMessageListener {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FileMessageListener.class);

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.producer.FileMessageProducer;
-@RestController
-@RequestMapping("/files")
+//@RestController
+//@RequestMapping("/files")
 public class FileController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FileController.class);

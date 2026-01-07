@@ -33,16 +33,19 @@ public class XmlFileProcessor {
 	private final ClienteRepository clienteRepository;
 	private final ProductoRepository productoRepository;
 	private final PedidoRepository pedidoRepository;
+	
+	private final XmlXsdValidator xsdValidator;
 
 	private static final Logger logger = LoggerFactory.getLogger(XmlFileProcessor.class);
 
 
 	public XmlFileProcessor(ClienteRepository clienteRepository,
 			ProductoRepository productoRepository,
-			PedidoRepository pedidoRepository) {
+			PedidoRepository pedidoRepository, XmlXsdValidator xsdValidator) {
 		this.clienteRepository = clienteRepository;
 		this.productoRepository = productoRepository;
 		this.pedidoRepository = pedidoRepository;
+		this.xsdValidator = xsdValidator;
 
 	}
 
@@ -56,6 +59,9 @@ public class XmlFileProcessor {
 		}
 
 		try {
+			
+			// VALIDACIÓN XSD
+		    xsdValidator.validar(file, "src/main/resources/xsd/input2.xsd");
 
 			Document doc = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder()
@@ -234,6 +240,7 @@ public class XmlFileProcessor {
 
 		return lista;
 	}
+	
 
 	private String getText(Element element, String tag) {
 		return element.getElementsByTagName(tag).item(0).getTextContent();

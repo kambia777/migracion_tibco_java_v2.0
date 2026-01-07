@@ -1,5 +1,5 @@
 <clientes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="input.xsd">
+ xsi:noNamespaceSchemaLocation="../xsd/input.xsd">
     <cliente>
     	<codigo>701</codigo>
     	<nombre>Katherin</nombre>
