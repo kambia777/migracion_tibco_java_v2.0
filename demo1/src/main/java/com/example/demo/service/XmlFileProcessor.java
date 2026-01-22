@@ -152,7 +152,7 @@ public class XmlFileProcessor {
 		//verificar estado crediticio
 		EstadoCrediticioServiceApi estadoCrediticio = new EstadoCrediticioServiceApi();
 		//EstadoCrediticioDTO esDeudor = estadoCrediticio.esDeudor("admin", "1234", Long.valueOf(cliente.getCodigo()));
-		EstadoCrediticioDTO esDeudor =estadoCrediticio.esDeudorNuevo(auth, Long.valueOf(cliente.getCodigo()));
+		EstadoCrediticioDTO esDeudor =estadoCrediticio.esDeudorGenerico(auth, Long.valueOf(cliente.getCodigo()));
 		if(!esDeudor.isEs_deudor()) {
 			// Procesar pedidos
 			NodeList pedidos = clienteElement.getElementsByTagName("pedido");
