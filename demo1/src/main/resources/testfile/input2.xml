@@ -6,10 +6,17 @@
 	<pedido>
 		<fecha>2024-12-12</fecha>
 		<estado>confirmado</estado>
-		<total>1.00</total>
+		<total>2.00</total>
 		<detalle_pedido>
 			<producto>
 				<id_producto>6</id_producto>
+			</producto>
+			<cantidad>1</cantidad>
+			<precio_unitario>1.00</precio_unitario>
+		</detalle_pedido>
+		<detalle_pedido>
+			<producto>
+				<id_producto>7</id_producto>
 			</producto>
 			<cantidad>1</cantidad>
 			<precio_unitario>1.00</precio_unitario>

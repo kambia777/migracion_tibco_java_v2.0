@@ -54,7 +54,7 @@ public class FilePollingService {
         for (File file : files) {
             try {
                 log.info("Procesando fichero: {}", file.getName());
-                xmlFileProcessor.processFile(file.getAbsolutePath());
+                xmlFileProcessor.processFile(file.getAbsolutePath(), "src/main/resources/xsd/input2.xsd", "cliente");
 
                 moveFile(file, processedDir);
             } catch (Exception e) {

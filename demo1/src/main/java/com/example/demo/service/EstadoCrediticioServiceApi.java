@@ -6,11 +6,12 @@ import java.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-
+import com.example.demo.authInterface.AuthenticationStrategy;
 import com.example.demo.dto.EstadoCrediticioDTO;
 
 
@@ -52,11 +53,6 @@ public class EstadoCrediticioServiceApi {
 					EstadoCrediticioDTO.class
 					);
 
-			// Imprimir los clientes
-			//for (EstadoCrediticioDTO c : response.getBody()) {
-			//    System.out.println("ID: " + c.getId() + ", Código: " + c.getCodigo());
-			//}
-
 			return response.getBody();
 		} catch (Exception ex) {
 			System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
@@ -64,5 +60,37 @@ public class EstadoCrediticioServiceApi {
 		}
 	}
 
+	
+	public EstadoCrediticioDTO esDeudorNuevo(AuthenticationStrategy authenticationStrategy,
+            Long codigoCliente) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // 🔥 POLIMORFISMO AQUÍ
+            authenticationStrategy.apply(headers);
+
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+
+            String url = "http://localhost:9090"
+                    + "/api/v1/estados-crediticios?codigoCliente="
+                    + codigoCliente;
+
+            System.out.println("🔗 Consumiento API externa: " + url);
+            ResponseEntity<EstadoCrediticioDTO> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.GET,
+                            request,
+                            EstadoCrediticioDTO.class
+                    );
+
+            return response.getBody();
+
+        } catch (Exception ex) {
+            System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
+            return null;
+        }
+	}
 
 }

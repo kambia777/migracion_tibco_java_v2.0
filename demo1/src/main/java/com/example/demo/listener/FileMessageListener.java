@@ -29,7 +29,7 @@ public class FileMessageListener {
         }
         try {
             logger.info("▶ Procesando archivo: {}", filePath);
-            xmlFileProcessor.processFile(filePath);
+            xmlFileProcessor.processFile(filePath, "", "");
             logger.info("✔ Archivo procesado correctamente: {}", filePath);
 
         } catch (Exception e) {

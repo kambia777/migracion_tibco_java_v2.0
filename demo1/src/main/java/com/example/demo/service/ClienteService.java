@@ -25,5 +25,13 @@ public class ClienteService {
     public Cliente obtenerClientePorId(Long id) {
         return clienteRepository.findById(id).orElse(null);
     }
+    
+    public Cliente obtenerClientePorCodigo(String codigo) {
+    	Cliente cliente = clienteRepository.findByCodigo(codigo);
+        if (cliente == null) {
+            throw new RuntimeException("Cliente no encontrado con código " + codigo);
+        }
+        return cliente;
+    }
 
 }

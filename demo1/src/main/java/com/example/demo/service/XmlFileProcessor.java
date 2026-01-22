@@ -18,6 +18,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.example.demo.authInterface.AuthenticationStrategy;
+import com.example.demo.authPolymorphism.BasicAuthStrategy;
 import com.example.demo.dto.EstadoCrediticioDTO;
 import com.example.demo.entity.Cliente;
 import com.example.demo.entity.DetallePedido;
@@ -50,7 +52,7 @@ public class XmlFileProcessor {
 	}
 
 
-	public void processFile(String filePath) {
+	public void processFile(String filePath, String schemaPath, String node) {
 
 		File file = new File(filePath);
 		if (!file.exists()) {
@@ -61,13 +63,13 @@ public class XmlFileProcessor {
 		try {
 			
 			// VALIDACIÓN XSD
-		    xsdValidator.validar(file, "src/main/resources/xsd/input2.xsd");
+		    xsdValidator.validar(file, schemaPath);
 
 			Document doc = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder()
 					.parse(file);
 
-			NodeList clientes = doc.getElementsByTagName("cliente");
+			NodeList clientes = doc.getElementsByTagName(node);
 
 			for (int i = 0; i < clientes.getLength(); i++) {
 
@@ -76,8 +78,7 @@ public class XmlFileProcessor {
 					Element clienteElement = (Element) nodo;
 					processCliente(clienteElement);
 				}
-				//Element clienteElement = (Element) clientes.item(i);
-				//processCliente(clienteElement);
+				
 			}
 		}
 		catch (ParserConfigurationException e) {
@@ -119,24 +120,23 @@ public class XmlFileProcessor {
 	private void processCliente(Element clienteElement) {
 
 		//String codigoCliente = getText(clienteElement, "id");
-		String codigoClienteStr = getText(clienteElement, "id");
+		String codigoClienteStr = getText(clienteElement, "codigo");
 
 		if (codigoClienteStr == null || codigoClienteStr.isBlank()) {
-			logger.warn("El nodo <cliente> no contiene un <id> válido. Se omite el procesamiento.");
+			logger.warn("El nodo <cliente> no contiene un <codigo> válido. Se omite el procesamiento.");
 			return;
 		}
 
-		Long codigoCliente;
+		String codigoCliente;
 		try {
-			codigoCliente = Long.valueOf(codigoClienteStr);
+			codigoCliente = codigoClienteStr;
 		} catch (NumberFormatException e) {
-			logger.error("El valor del <id> no es numérico: {}", codigoClienteStr);
+			logger.error("El valor del <codigo> no es numérico: {}", codigoClienteStr);
 			return;
 		}
 
 		// Buscar cliente en BD
-		Cliente cliente = clienteRepository.findById(codigoCliente)
-				.orElse(null);
+		Cliente cliente = clienteRepository.findByCodigo(codigoCliente);
 
 		if (cliente == null) {
 			logger.error("❌ Cliente no encontrado en BD: {}", codigoCliente);
@@ -144,10 +144,15 @@ public class XmlFileProcessor {
 		}
 
 		logger.info("✔ Cliente encontrado: {}", cliente.getCodigo());
+		
+		//nuevas lineas de codigo
+		AuthenticationStrategy auth =
+		        new BasicAuthStrategy("admin", "1234");
 
 		//verificar estado crediticio
 		EstadoCrediticioServiceApi estadoCrediticio = new EstadoCrediticioServiceApi();
-		EstadoCrediticioDTO esDeudor = estadoCrediticio.esDeudor("admin", "1234", Long.valueOf(cliente.getCodigo()));
+		//EstadoCrediticioDTO esDeudor = estadoCrediticio.esDeudor("admin", "1234", Long.valueOf(cliente.getCodigo()));
+		EstadoCrediticioDTO esDeudor =estadoCrediticio.esDeudorNuevo(auth, Long.valueOf(cliente.getCodigo()));
 		if(!esDeudor.isEs_deudor()) {
 			// Procesar pedidos
 			NodeList pedidos = clienteElement.getElementsByTagName("pedido");
