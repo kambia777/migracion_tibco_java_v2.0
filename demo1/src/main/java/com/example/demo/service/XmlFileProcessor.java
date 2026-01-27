@@ -1,13 +1,9 @@
 package com.example.demo.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +12,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.example.demo.authInterface.AuthenticationStrategy;
 import com.example.demo.authPolymorphism.BasicAuthStrategy;
@@ -35,91 +30,37 @@ public class XmlFileProcessor {
 	private final ClienteRepository clienteRepository;
 	private final ProductoRepository productoRepository;
 	private final PedidoRepository pedidoRepository;
-	
-	private final XmlXsdValidator xsdValidator;
 
 	private static final Logger logger = LoggerFactory.getLogger(XmlFileProcessor.class);
 
 
 	public XmlFileProcessor(ClienteRepository clienteRepository,
 			ProductoRepository productoRepository,
-			PedidoRepository pedidoRepository, XmlXsdValidator xsdValidator) {
+			PedidoRepository pedidoRepository) {
 		this.clienteRepository = clienteRepository;
 		this.productoRepository = productoRepository;
 		this.pedidoRepository = pedidoRepository;
-		this.xsdValidator = xsdValidator;
-
 	}
 
 
-	public void processFile(String filePath, String schemaPath, String node) {
-
-		File file = new File(filePath);
-		if (!file.exists()) {
-			logger.error("❌ Archivo no encontrado: {}", filePath);
-			return;
-		}
-
-		try {
-			
-			// VALIDACIÓN XSD
-		    xsdValidator.validar(file, schemaPath);
-
-			Document doc = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder()
-					.parse(file);
-
-			NodeList clientes = doc.getElementsByTagName(node);
-
-			for (int i = 0; i < clientes.getLength(); i++) {
-
-				Node nodo = clientes.item(i);
-				if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-					Element clienteElement = (Element) nodo;
-					processCliente(clienteElement);
-				}
-				
-			}
-		}
-		catch (ParserConfigurationException e) {
-			logger.error("❌ Error en configuración del parser XML: {}", e.getMessage());
-		} catch (SAXException e) {
-			logger.error("❌ XML mal formado o inválido: {}", e.getMessage());
-		} catch (IOException e) {
-			logger.error("❌ Error de lectura/escritura procesando el archivo: {}", e.getMessage());
-		} catch (Exception e) {
-			logger.error("🔥 Error inesperado procesando archivo: {}", e.getMessage(), e);
-		}
-	}
-
-	public void processXmlNodes(Document doc, String nodoName) {
-
-		NodeList clientes = doc.getElementsByTagName(nodoName);
+	public void processFile(Document doc, String node) {
+	
+		NodeList clientes = doc.getElementsByTagName(node);
 
 		for (int i = 0; i < clientes.getLength(); i++) {
 
 			Node nodo = clientes.item(i);
-
 			if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-
-				Element elemento = (Element) nodo;
-
-				String codigo = elemento.getElementsByTagName("codigo").item(0).getTextContent();
-				String nombre = elemento.getElementsByTagName("nombre").item(0).getTextContent();
-				Cliente cliente = new Cliente();
-				cliente.setCodigo(codigo);
-				cliente.setNombre(nombre);
-
-				clienteRepository.save(cliente);
-
-				System.out.println("💾 Cliente insertado - código: " + codigo);
+				Element clienteElement = (Element) nodo;
+				processCliente(clienteElement);
 			}
 		}
+			
 	}
+
 
 	private void processCliente(Element clienteElement) {
 
-		//String codigoCliente = getText(clienteElement, "id");
 		String codigoClienteStr = getText(clienteElement, "codigo");
 
 		if (codigoClienteStr == null || codigoClienteStr.isBlank()) {
@@ -151,7 +92,6 @@ public class XmlFileProcessor {
 
 		//verificar estado crediticio
 		EstadoCrediticioServiceApi estadoCrediticio = new EstadoCrediticioServiceApi();
-		//EstadoCrediticioDTO esDeudor = estadoCrediticio.esDeudor("admin", "1234", Long.valueOf(cliente.getCodigo()));
 		EstadoCrediticioDTO esDeudor =estadoCrediticio.esDeudorGenerico(auth, Long.valueOf(cliente.getCodigo()));
 		if(!esDeudor.isEs_deudor()) {
 			// Procesar pedidos

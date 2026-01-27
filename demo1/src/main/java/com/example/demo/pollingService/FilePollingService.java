@@ -6,14 +6,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
+import com.example.demo.filePallete.FilePallete;
 import com.example.demo.service.XmlFileProcessor;
+import com.example.demo.service.XmlXsdValidator;
 
 @Component
 @EnableScheduling
@@ -31,30 +37,36 @@ public class FilePollingService {
     private String errorDir;
 
     private final XmlFileProcessor xmlFileProcessor;
+    private final FilePallete filePallete;
+    private final XmlXsdValidator xmlActivitiesPallete;
 
-    public FilePollingService(XmlFileProcessor xmlFileProcessor) {
+    public FilePollingService(XmlFileProcessor xmlFileProcessor, FilePallete filePallete, XmlXsdValidator xmlActivitiesPallete) {
         this.xmlFileProcessor = xmlFileProcessor;
+        this.filePallete = filePallete;
+        this.xmlActivitiesPallete = xmlActivitiesPallete;
     }
 
-    @Scheduled(fixedDelay = 10000) // cada 10 segundos
+    @Scheduled(fixedDelay = 10000000) // cada 10 segundos
     public void pollDirectory() {
-        File folder = new File(inputDir);
+    	
+        File[] files = filePallete.listFiles(inputDir, ".xml");
 
-        if (!folder.exists() || !folder.isDirectory()) {
-            log.error("Directorio no válido: {}", inputDir);
-            return;
-        }
-
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".xml"));
-
-        if (files == null || files.length == 0) {
+        if (files.length == 0) {
+        	log.error("❌ Archivo no encontrado: {}", inputDir);
             return;
         }
 
         for (File file : files) {
             try {
+            	
+    			// VALIDACIÓN XSD
+            	xmlActivitiesPallete.validarXML(file, "src/main/resources/xsd/input2.xsd");
+            	
+            	 // 2️⃣ Parseo XML → Document
+                Document doc = parseXml(file);
+
                 log.info("Procesando fichero: {}", file.getName());
-                xmlFileProcessor.processFile(file.getAbsolutePath(), "src/main/resources/xsd/input2.xsd", "cliente");
+                xmlFileProcessor.processFile(doc, "cliente");
 
                 moveFile(file, processedDir);
             } catch (Exception e) {
@@ -63,6 +75,15 @@ public class FilePollingService {
             }
         }
     }
+    
+    private Document parseXml(File file) throws Exception {
+        DocumentBuilder builder = DocumentBuilderFactory
+                .newInstance()
+                .newDocumentBuilder();
+        return builder.parse(file);
+    }
+    
+
 
     private void moveFile(File file, String targetDir) {
         try {

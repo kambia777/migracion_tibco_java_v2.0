@@ -20,7 +20,7 @@ public class XmlXsdValidator {
 	
 	private static final Logger log = LoggerFactory.getLogger(XmlXsdValidator.class);
 
-    public void validar(File xmlFile, String xsdPath) {
+    public void validarXML(File xmlFile, String xsdPath) {
         try {
             SchemaFactory factory =
                     SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

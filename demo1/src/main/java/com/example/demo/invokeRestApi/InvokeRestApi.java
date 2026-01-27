@@ -27,7 +27,7 @@ public class InvokeRestApi {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // 🔥 POLIMORFISMO DE AUTENTICACIÓN
+        // POLIMORFISMO DE AUTENTICACIÓN
         if (authenticationStrategy != null) {
             authenticationStrategy.apply(headers);
         }
