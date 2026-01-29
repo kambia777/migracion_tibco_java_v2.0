@@ -46,7 +46,7 @@ public class EstadoCrediticioServiceApi {
 
 			// --- Construcción de URL ---
 			String url = "http://localhost:9090" + "/api/v1/estados-crediticios?codigoCliente=" + codigoCliente;
-			System.out.println("🔗 Consumiento API externa: " + url);
+			System.out.println("Consumiento API externa: " + url);
 			// Hacer la petición GET
 			ResponseEntity<EstadoCrediticioDTO> response = restTemplate1.exchange(
 					url,
@@ -57,7 +57,7 @@ public class EstadoCrediticioServiceApi {
 
 			return response.getBody();
 		} catch (Exception ex) {
-			System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
+			System.err.println("Error llamando a API de terceros: " + ex.getMessage());
 			return null; // O lanzar excepción personalizada
 		}
 	}
@@ -69,7 +69,7 @@ public class EstadoCrediticioServiceApi {
 			HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            // 🔥 POLIMORFISMO AQUÍ
+            // POLIMORFISMO AQUÍ
             authenticationStrategy.apply(headers);
 
             HttpEntity<Void> request = new HttpEntity<>(headers);
@@ -77,8 +77,9 @@ public class EstadoCrediticioServiceApi {
             String url = "http://localhost:9090"
                     + "/api/v1/estados-crediticios?codigoCliente="
                     + codigoCliente;
+          
 
-            System.out.println("🔗 Consumiento API externa: " + url);
+            System.out.println("Consumiento API externa: " + url);
             ResponseEntity<EstadoCrediticioDTO> response =
                     restTemplate1.exchange(
                             url,
@@ -90,7 +91,7 @@ public class EstadoCrediticioServiceApi {
             return response.getBody();
 
         } catch (Exception ex) {
-            System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
+            System.err.println("Error llamando a API de terceros: " + ex.getMessage());
             return null;
         }
 	}
@@ -103,14 +104,17 @@ public class EstadoCrediticioServiceApi {
 	        String url = "http://localhost:9090"
 	                + "/api/v1/estados-crediticios?codigoCliente="
 	                + codigoCliente;
+	        /*String url = "http://host.docker.internal:9090"
+	                + "/api/v1/estados-crediticios?codigoCliente="
+	               + codigoCliente;*/
 
-	        System.out.println("🔗 Consumiento API externa: " + url);
+	        System.out.println("Consumiento API externa: " + url);
 	        //Pieza invokeRestApi
 	        InvokeRestApi invokeRestApi =
 	                new InvokeRestApi(new RestTemplate());
 	        //configuración de la pieza invokeRestApi
 	        EstadoCrediticioDTO dto =
-	                invokeRestApi.execute(
+	                invokeRestApi.invokeRestApi(
 	                        url,
 	                        HttpMethod.GET,
 	                        null,
@@ -122,7 +126,7 @@ public class EstadoCrediticioServiceApi {
 	        return dto;
 
 	    } catch (Exception ex) {
-	        System.err.println("❌ Error llamando a API de terceros: " + ex.getMessage());
+	        System.err.println("Error llamando a API de terceros: " + ex.getMessage());
 	        return null;
 	    }
 	}

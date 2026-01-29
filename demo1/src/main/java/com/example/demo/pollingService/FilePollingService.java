@@ -38,35 +38,28 @@ public class FilePollingService {
 
     private final XmlFileProcessor xmlFileProcessor;
     private final FilePallete filePallete;
-    private final XmlXsdValidator xmlActivitiesPallete;
+ 
 
-    public FilePollingService(XmlFileProcessor xmlFileProcessor, FilePallete filePallete, XmlXsdValidator xmlActivitiesPallete) {
+    public FilePollingService(XmlFileProcessor xmlFileProcessor, FilePallete filePallete) {
         this.xmlFileProcessor = xmlFileProcessor;
         this.filePallete = filePallete;
-        this.xmlActivitiesPallete = xmlActivitiesPallete;
     }
 
-    @Scheduled(fixedDelay = 10000000) // cada 10 segundos
+    @Scheduled(fixedDelay = 10000) // cada 10 segundos
     public void pollDirectory() {
     	
         File[] files = filePallete.listFiles(inputDir, ".xml");
 
         if (files.length == 0) {
-        	log.error("❌ Archivo no encontrado: {}", inputDir);
+        	log.error("Archivo no encontrado: {}", inputDir);
             return;
         }
 
         for (File file : files) {
             try {
             	
-    			// VALIDACIÓN XSD
-            	xmlActivitiesPallete.validarXML(file, "src/main/resources/xsd/input2.xsd");
-            	
-            	 // 2️⃣ Parseo XML → Document
-                Document doc = parseXml(file);
-
                 log.info("Procesando fichero: {}", file.getName());
-                xmlFileProcessor.processFile(doc, "cliente");
+                xmlFileProcessor.processFile(file);
 
                 moveFile(file, processedDir);
             } catch (Exception e) {
@@ -74,13 +67,6 @@ public class FilePollingService {
                 moveFile(file, errorDir);
             }
         }
-    }
-    
-    private Document parseXml(File file) throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory
-                .newInstance()
-                .newDocumentBuilder();
-        return builder.parse(file);
     }
     
 

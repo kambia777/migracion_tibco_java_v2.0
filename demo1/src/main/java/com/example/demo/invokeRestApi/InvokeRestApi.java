@@ -17,7 +17,7 @@ public class InvokeRestApi {
         this.restTemplate = restTemplate;
     }
     //Metodo Invoke Rest Api
-    public <T> T execute(
+    public <T> T invokeRestApi(
             String url,
             HttpMethod method,
             Object body,

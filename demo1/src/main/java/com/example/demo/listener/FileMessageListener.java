@@ -47,15 +47,15 @@ public class FileMessageListener {
         try {
             logger.info("📄 Procesando fichero: {}", file.getName());
 
-            // 2️⃣ Validación XSD
+            /*// 2️⃣ Validación XSD
             xmlXsdValidator.validarXML(file, "src/main/resources/xsd/input2.xsd");
             logger.info("✅ Validación XSD correcta");
 
             // 3️⃣ Parseo XML → Document
-            Document document = parseXml(file);
+            Document document = parseXml(file);*/
 
             // 4️⃣ Procesamiento de negocio
-            xmlFileProcessor.processFile(document, "cliente");
+            xmlFileProcessor.processFile(file);
             logger.info("✔ Fichero procesado correctamente: {}", file.getName());
 
         } catch (Exception e) {

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,26 +26,37 @@ import com.example.demo.repository.ClienteRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProductoRepository;
 
+import java.io.File;
 import java.math.BigDecimal;
 @Component
 public class XmlFileProcessor {
 	private final ClienteRepository clienteRepository;
 	private final ProductoRepository productoRepository;
 	private final PedidoRepository pedidoRepository;
+	private final XmlXsdValidator xmlActivitiesPallete;
+
 
 	private static final Logger logger = LoggerFactory.getLogger(XmlFileProcessor.class);
 
 
 	public XmlFileProcessor(ClienteRepository clienteRepository,
 			ProductoRepository productoRepository,
-			PedidoRepository pedidoRepository) {
+			PedidoRepository pedidoRepository, XmlXsdValidator xmlActivitiesPallete) {
 		this.clienteRepository = clienteRepository;
 		this.productoRepository = productoRepository;
 		this.pedidoRepository = pedidoRepository;
+		this.xmlActivitiesPallete = xmlActivitiesPallete;
 	}
 
 
-	public void processFile(Document doc, String node) {
+	public void processFile(File file) throws Exception {
+		
+	
+		String node = "cliente";
+		
+		// VALIDACIÓN XSD
+    	// Document doc = xmlActivitiesPallete.parseXML(file, "/app/resources/xsd/input2.xsd");
+		Document doc = xmlActivitiesPallete.parseXML(file, "src/main/resources/xsd/input2.xsd");
 	
 		NodeList clientes = doc.getElementsByTagName(node);
 
@@ -80,11 +93,11 @@ public class XmlFileProcessor {
 		Cliente cliente = clienteRepository.findByCodigo(codigoCliente);
 
 		if (cliente == null) {
-			logger.error("❌ Cliente no encontrado en BD: {}", codigoCliente);
+			logger.error("Cliente no encontrado en BD: {}", codigoCliente);
 			return;
 		}
 
-		logger.info("✔ Cliente encontrado: {}", cliente.getCodigo());
+		logger.info("Cliente encontrado: {}", cliente.getCodigo());
 		
 		//nuevas lineas de codigo
 		AuthenticationStrategy auth =
@@ -128,9 +141,9 @@ public class XmlFileProcessor {
 			pedidoRepository.save(pedido);
 
 
-			logger.info("✔ Pedido registrado correctamente para el cliente {}", cliente.getCodigo());
+			logger.info("Pedido registrado correctamente para el cliente {}", cliente.getCodigo());
 		}     catch (Exception e) {
-			logger.error("❌ Error procesando pedido para cliente {}: {}", cliente.getCodigo(), e.getMessage(), e);
+			logger.error("Error procesando pedido para cliente {}: {}", cliente.getCodigo(), e.getMessage(), e);
 		}
 
 
@@ -156,12 +169,12 @@ public class XmlFileProcessor {
 						);
 
 				Producto producto = productoRepository.findById(idProducto)
-						.orElseThrow(() -> new RuntimeException("❌ Producto no encontrado: " + idProducto));
+						.orElseThrow(() -> new RuntimeException("Producto no encontrado: " + idProducto));
 
 				int cantidad = Integer.parseInt(getText(detElement, "cantidad"));
 
 				if (producto.getStock() < cantidad) {
-					throw new RuntimeException("❌ Stock insuficiente para producto " + producto.getNombre());
+					throw new RuntimeException("Stock insuficiente para producto " + producto.getNombre());
 				}
 
 				// Descontar stock
@@ -175,10 +188,10 @@ public class XmlFileProcessor {
 
 				lista.add(detalle);
 
-				logger.info("✔ Detalle procesado: producto={} cantidad={} stockRestante={}",
+				logger.info("Detalle procesado: producto={} cantidad={} stockRestante={}",
 						producto.getNombre(), cantidad, producto.getStock());
 			} catch (Exception e) {
-				logger.error("❌ Error procesando detalle del pedido {}: {}", pedido.getIdPedido(), e.getMessage(), e);
+				logger.error("Error procesando detalle del pedido {}: {}", pedido.getIdPedido(), e.getMessage(), e);
 				// No lanzamos la excepción para continuar con los otros detalles
 			}
 		}
@@ -190,5 +203,8 @@ public class XmlFileProcessor {
 	private String getText(Element element, String tag) {
 		return element.getElementsByTagName(tag).item(0).getTextContent();
 	}
+	
+
+    
 
 }
